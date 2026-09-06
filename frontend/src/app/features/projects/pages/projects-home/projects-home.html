@@ -1,0 +1,73 @@
+<section class="projects-home">
+
+  <h1>FreeWorks</h1>
+
+  <h2>Proyectos</h2>
+
+  <p *ngIf="cargando">
+    Cargando proyectos...
+  </p>
+
+  <p *ngIf="error">
+    {{ error }}
+  </p>
+
+  <p
+    *ngIf="
+      !cargando &&
+      !error &&
+      proyectos.length === 0
+    "
+  >
+    No existen proyectos registrados.
+  </p>
+
+  <mat-card
+    *ngFor="let proyecto of proyectos"
+    class="project-card"
+  >
+
+    <mat-card-header>
+
+      <mat-card-title>
+        {{ proyecto.nombre }}
+      </mat-card-title>
+
+      <mat-card-subtitle>
+        {{ proyecto.cliente }}
+      </mat-card-subtitle>
+
+    </mat-card-header>
+
+    <mat-card-content>
+
+      <p>
+        {{ proyecto.descripcion }}
+      </p>
+
+      <p>
+        <strong>Prioridad:</strong>
+        {{ proyecto.prioridad }}
+      </p>
+
+      <p>
+        <strong>Estado:</strong>
+        {{ proyecto.estado_calculado }}
+      </p>
+
+      <p>
+        <strong>Progreso:</strong>
+        {{ proyecto.progreso }}%
+      </p>
+
+      <mat-progress-bar
+        mode="determinate"
+        [value]="proyecto.progreso"
+      >
+      </mat-progress-bar>
+
+    </mat-card-content>
+
+  </mat-card>
+
+</section>
