@@ -10,6 +10,8 @@ class ProyectoAdmin(admin.ModelAdmin):
         "cliente",
         "prioridad",
         "estado",
+        "estado_calculado",
+        "progreso",
         "fecha_inicio",
         "fecha_limite",
     )

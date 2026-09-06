@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.utils import timezone
 
 class Proyecto(models.Model):
     class Estado(models.TextChoices):
@@ -35,6 +35,38 @@ class Proyecto(models.Model):
         verbose_name = "Proyecto"
         verbose_name_plural = "Proyectos"
 
+    @property
+    def total_entregables(self):
+        return self.entregables.count()
+
+    @property
+    def entregables_completados(self):
+        return self.entregables.filter(entregado=True).count()
+
+    @property
+    def progreso(self):
+        total = self.total_entregables
+
+        if total == 0:
+            return 0
+
+        completados = self.entregables_completados
+        return round((completados / total) * 100)
+
+    @property
+    def esta_atrasado(self):
+        return (
+            self.estado != self.Estado.FINALIZADO
+            and self.fecha_limite < timezone.localdate()
+        )
+
+    @property
+    def estado_calculado(self):
+        if self.esta_atrasado:
+            return "Atrasado"
+
+        return self.get_estado_display()
+
     def __str__(self):
         return self.nombre
 
@@ -61,6 +93,13 @@ class Entregable(models.Model):
         ordering = ["fecha_entrega", "nombre"]
         verbose_name = "Entregable"
         verbose_name_plural = "Entregables"
+
+    @property
+    def esta_atrasado(self):
+        return (
+            not self.entregado
+            and self.fecha_entrega < timezone.localdate()
+        )
 
     def __str__(self):
         return f"{self.nombre} - {self.proyecto.nombre}"
