@@ -1,0 +1,410 @@
+<div class="form-page">
+
+  <header class="topbar">
+
+    <div class="brand">
+
+      <div class="brand__icon">
+        <mat-icon>
+          work_outline
+        </mat-icon>
+      </div>
+
+      <div>
+        <strong>
+          FreeWorks
+        </strong>
+
+        <span>
+          Freelancer Dashboard
+        </span>
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <main class="form-page__content">
+
+    <button
+      mat-button
+      type="button"
+      class="back-button"
+      (click)="cancelar()"
+    >
+      <mat-icon>
+        arrow_back
+      </mat-icon>
+
+      Volver al dashboard
+    </button>
+
+
+    <div class="page-heading">
+
+      <p class="eyebrow">
+        PROYECTOS
+      </p>
+
+      <h1>
+        {{ tituloPagina }}
+      </h1>
+
+      <p>
+        Completa la información necesaria
+        para gestionar el proyecto.
+      </p>
+
+    </div>
+
+
+    <mat-card
+      class="form-card"
+      *ngIf="!cargando"
+    >
+
+      <mat-card-content>
+
+        <form
+          [formGroup]="form"
+          (ngSubmit)="guardar()"
+        >
+
+          <div
+            class="server-error"
+            *ngIf="errorServidor"
+          >
+            <mat-icon>
+              error_outline
+            </mat-icon>
+
+            <span>
+              {{ errorServidor }}
+            </span>
+          </div>
+
+
+          <div class="form-grid">
+
+            <mat-form-field
+              appearance="outline"
+              class="full-width"
+            >
+              <mat-label>
+                Nombre del proyecto
+              </mat-label>
+
+              <input
+                matInput
+                type="text"
+                formControlName="nombre"
+                placeholder="Ej: Sitio web corporativo"
+              >
+
+              <mat-error
+                *ngIf="nombre.hasError('required')"
+              >
+                El nombre es obligatorio.
+              </mat-error>
+
+              <mat-error
+                *ngIf="nombre.hasError('minlength')"
+              >
+                Debe tener al menos 3 caracteres.
+              </mat-error>
+
+              <mat-error
+                *ngIf="nombre.hasError('maxlength')"
+              >
+                No puede superar 150 caracteres.
+              </mat-error>
+
+              <mat-error
+                *ngIf="nombre.hasError('servidor')"
+              >
+                {{ nombre.getError('servidor') }}
+              </mat-error>
+            </mat-form-field>
+
+
+            <mat-form-field
+              appearance="outline"
+              class="full-width"
+            >
+              <mat-label>
+                Cliente
+              </mat-label>
+
+              <input
+                matInput
+                type="text"
+                formControlName="cliente"
+                placeholder="Ej: EcoMarket"
+              >
+
+              <mat-error
+                *ngIf="cliente.hasError('required')"
+              >
+                El cliente es obligatorio.
+              </mat-error>
+
+              <mat-error
+                *ngIf="cliente.hasError('minlength')"
+              >
+                Debe tener al menos 2 caracteres.
+              </mat-error>
+
+              <mat-error
+                *ngIf="cliente.hasError('maxlength')"
+              >
+                No puede superar 150 caracteres.
+              </mat-error>
+
+              <mat-error
+                *ngIf="cliente.hasError('servidor')"
+              >
+                {{ cliente.getError('servidor') }}
+              </mat-error>
+            </mat-form-field>
+
+
+            <mat-form-field
+              appearance="outline"
+              class="full-width"
+            >
+              <mat-label>
+                Descripción
+              </mat-label>
+
+              <textarea
+                matInput
+                rows="5"
+                formControlName="descripcion"
+                placeholder="Describe brevemente el proyecto"
+              ></textarea>
+
+              <mat-error
+                *ngIf="descripcion.hasError('required')"
+              >
+                La descripción es obligatoria.
+              </mat-error>
+
+              <mat-error
+                *ngIf="descripcion.hasError('minlength')"
+              >
+                Debe tener al menos 10 caracteres.
+              </mat-error>
+
+              <mat-error
+                *ngIf="descripcion.hasError('servidor')"
+              >
+                {{ descripcion.getError('servidor') }}
+              </mat-error>
+            </mat-form-field>
+
+
+            <div class="two-columns">
+
+              <mat-form-field
+                appearance="outline"
+              >
+                <mat-label>
+                  Prioridad
+                </mat-label>
+
+                <mat-select
+                  formControlName="prioridad"
+                >
+                  <mat-option
+                    *ngFor="
+                      let opcion of prioridades
+                    "
+                    [value]="opcion.valor"
+                  >
+                    {{ opcion.texto }}
+                  </mat-option>
+                </mat-select>
+
+                <mat-error
+                  *ngIf="prioridad.hasError('required')"
+                >
+                  La prioridad es obligatoria.
+                </mat-error>
+
+                <mat-error
+                  *ngIf="prioridad.hasError('servidor')"
+                >
+                  {{ prioridad.getError('servidor') }}
+                </mat-error>
+              </mat-form-field>
+
+
+              <mat-form-field
+                appearance="outline"
+              >
+                <mat-label>
+                  Estado
+                </mat-label>
+
+                <mat-select
+                  formControlName="estado"
+                >
+                  <mat-option
+                    *ngFor="
+                      let opcion of estadosDisponibles
+                    "
+                    [value]="opcion.valor"
+                  >
+                    {{ opcion.texto }}
+                  </mat-option>
+                </mat-select>
+
+                <mat-error
+                  *ngIf="estado.hasError('required')"
+                >
+                  El estado es obligatorio.
+                </mat-error>
+
+                <mat-error
+                  *ngIf="estado.hasError('servidor')"
+                >
+                  {{ estado.getError('servidor') }}
+                </mat-error>
+              </mat-form-field>
+
+            </div>
+
+
+            <div class="two-columns">
+
+              <mat-form-field
+                appearance="outline"
+              >
+                <mat-label>
+                  Fecha de inicio
+                </mat-label>
+
+                <input
+                  matInput
+                  type="date"
+                  formControlName="fecha_inicio"
+                >
+
+                <mat-error
+                  *ngIf="fechaInicio.hasError('required')"
+                >
+                  La fecha de inicio es obligatoria.
+                </mat-error>
+
+                <mat-error
+                  *ngIf="fechaInicio.hasError('servidor')"
+                >
+                  {{ fechaInicio.getError('servidor') }}
+                </mat-error>
+              </mat-form-field>
+
+
+              <mat-form-field
+                appearance="outline"
+              >
+                <mat-label>
+                  Fecha límite
+                </mat-label>
+
+                <input
+                  matInput
+                  type="date"
+                  formControlName="fecha_limite"
+                >
+
+                <mat-error
+                  *ngIf="fechaLimite.hasError('required')"
+                >
+                  La fecha límite es obligatoria.
+                </mat-error>
+
+                <mat-error
+                  *ngIf="fechaLimite.hasError('servidor')"
+                >
+                  {{ fechaLimite.getError('servidor') }}
+                </mat-error>
+              </mat-form-field>
+
+            </div>
+
+
+            <div
+              class="date-error"
+              *ngIf="
+                form.hasError('fechasInvalidas') &&
+                (fechaInicio.touched ||
+                 fechaLimite.touched)
+              "
+            >
+              <mat-icon>
+                warning_amber
+              </mat-icon>
+
+              <span>
+                La fecha límite no puede ser
+                anterior a la fecha de inicio.
+              </span>
+            </div>
+
+          </div>
+
+
+          <div class="form-actions">
+
+            <button
+              mat-stroked-button
+              type="button"
+              (click)="cancelar()"
+              [disabled]="guardando"
+            >
+              Cancelar
+            </button>
+
+            <button
+              mat-flat-button
+              type="submit"
+              [disabled]="guardando"
+            >
+              <mat-icon>
+                save
+              </mat-icon>
+
+              {{
+                guardando
+                  ? 'Guardando...'
+                  : 'Guardar proyecto'
+              }}
+            </button>
+
+          </div>
+
+        </form>
+
+      </mat-card-content>
+
+    </mat-card>
+
+
+    <div
+      class="loading-state"
+      *ngIf="cargando"
+    >
+      <p>
+        Cargando proyecto...
+      </p>
+
+      <mat-progress-bar
+        mode="indeterminate"
+      >
+      </mat-progress-bar>
+    </div>
+
+  </main>
+
+</div>

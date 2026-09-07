@@ -52,6 +52,8 @@
 .welcome {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
   margin-bottom: 30px;
 }
 
@@ -255,6 +257,10 @@
 
   .section-heading {
     align-items: flex-start;
+    flex-direction: column;
+  }
+
+    .welcome {
     flex-direction: column;
   }
 }

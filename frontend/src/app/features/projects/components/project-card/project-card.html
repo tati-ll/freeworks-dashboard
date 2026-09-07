@@ -56,6 +56,26 @@
 
     <div class="project-data">
 
+      <div class="project-actions">
+
+        <button
+          mat-stroked-button
+          type="button"
+          [routerLink]="[
+            '/proyectos',
+            proyecto.id,
+            'editar'
+          ]"
+        >
+          <mat-icon>
+            edit
+          </mat-icon>
+
+          Editar proyecto
+        </button>
+
+      </div>
+
       <div class="data-item">
 
         <mat-icon>

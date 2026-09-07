@@ -1,0 +1,168 @@
+.form-page {
+  min-height: 100vh;
+  background: #f7f7f9;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  min-height: 72px;
+  padding: 0 32px;
+  background: #fff;
+  border-bottom: 1px solid #e8e8eb;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand__icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  color: var(--mat-sys-on-primary, #fff);
+  background: var(--mat-sys-primary, #3f51b5);
+}
+
+.brand > div:last-child {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand strong {
+  font-size: 1.05rem;
+}
+
+.brand span {
+  margin-top: 2px;
+  color: #777;
+  font-size: 0.78rem;
+}
+
+.form-page__content {
+  width: min(900px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 32px 0 64px;
+}
+
+.back-button {
+  margin-bottom: 24px;
+}
+
+.page-heading {
+  margin-bottom: 24px;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: var(--mat-sys-primary, #3f51b5);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.page-heading h1 {
+  margin: 0;
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+}
+
+.page-heading p:last-child {
+  margin: 8px 0 0;
+  color: #666;
+}
+
+.form-card {
+  border-radius: 16px;
+}
+
+.form-card mat-card-content {
+  padding: 28px;
+}
+
+.form-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.two-columns {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.two-columns mat-form-field {
+  width: 100%;
+}
+
+.server-error,
+.date-error {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 10px;
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.server-error {
+  margin-bottom: 22px;
+  padding: 14px;
+}
+
+.date-error {
+  margin-top: -4px;
+  padding: 12px 14px;
+  font-size: 0.9rem;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top: 1px solid #e5e5e5;
+}
+
+.loading-state {
+  padding: 30px;
+  border: 1px solid #e4e4e7;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.loading-state p {
+  margin-top: 0;
+}
+
+@media (max-width: 650px) {
+  .topbar {
+    padding: 0 20px;
+  }
+
+  .two-columns {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .form-card mat-card-content {
+    padding: 20px;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .form-actions button {
+    width: 100%;
+  }
+}
