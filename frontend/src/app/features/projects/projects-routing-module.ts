@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { ProjectFormComponent } from './pages/project-form/project-form';
 import { ProjectsHomeComponent } from './pages/projects-home/projects-home';
+import { ProjectDetailComponent } from './pages/project-detail/project-detail';
 
 const routes: Routes = [
   {
@@ -16,6 +17,10 @@ const routes: Routes = [
   {
     path: 'proyectos/:id/editar',
     component: ProjectFormComponent,
+  },
+  {
+  path: 'proyectos/:id',
+  component: ProjectDetailComponent,
   },
 ];
 

@@ -1,0 +1,809 @@
+<div class="detail-page">
+
+  <header class="topbar">
+
+    <div class="brand">
+
+      <div class="brand__icon">
+        <mat-icon>
+          work_outline
+        </mat-icon>
+      </div>
+
+      <div>
+        <strong>
+          FreeWorks
+        </strong>
+
+        <span>
+          Freelancer Dashboard
+        </span>
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <main class="detail-content">
+
+    <button
+      mat-button
+      type="button"
+      class="back-button"
+      (click)="volver()"
+    >
+      <mat-icon>
+        arrow_back
+      </mat-icon>
+
+      Volver al dashboard
+    </button>
+
+
+    <div
+      class="loading-state"
+      *ngIf="cargando"
+    >
+      <p>
+        Cargando proyecto...
+      </p>
+
+      <mat-progress-bar
+        mode="indeterminate"
+      >
+      </mat-progress-bar>
+    </div>
+
+
+    <div
+      class="message message--error"
+      *ngIf="error"
+    >
+      <mat-icon>
+        error_outline
+      </mat-icon>
+
+      {{ error }}
+    </div>
+
+
+    <div
+      class="message message--success"
+      *ngIf="mensaje"
+    >
+      <mat-icon>
+        check_circle
+      </mat-icon>
+
+      {{ mensaje }}
+    </div>
+
+
+    <ng-container
+      *ngIf="proyecto && !cargando"
+    >
+
+      <section class="project-heading">
+
+        <div>
+
+          <p class="eyebrow">
+            DETALLE DEL PROYECTO
+          </p>
+
+          <h1>
+            {{ proyecto.nombre }}
+          </h1>
+
+          <p>
+            {{ proyecto.cliente }}
+          </p>
+
+        </div>
+
+        <span
+          class="project-status"
+          [class.project-status--overdue]="
+            proyecto.esta_atrasado
+          "
+        >
+          {{ proyecto.estado_calculado }}
+        </span>
+
+      </section>
+
+
+      <section class="overview-grid">
+
+        <mat-card class="overview-card">
+          <mat-card-content>
+
+            <span>
+              Progreso general
+            </span>
+
+            <strong>
+              {{ proyecto.progreso }}%
+            </strong>
+
+            <mat-progress-bar
+              mode="determinate"
+              [value]="proyecto.progreso"
+            >
+            </mat-progress-bar>
+
+          </mat-card-content>
+        </mat-card>
+
+
+        <mat-card class="overview-card">
+          <mat-card-content>
+
+            <span>
+              Entregables
+            </span>
+
+            <strong>
+              {{ proyecto.entregables_completados }}
+              /
+              {{ proyecto.total_entregables }}
+            </strong>
+
+          </mat-card-content>
+        </mat-card>
+
+
+        <mat-card class="overview-card">
+          <mat-card-content>
+
+            <span>
+              Fecha límite
+            </span>
+
+            <strong>
+              {{
+                proyecto.fecha_limite
+                  | date:'dd/MM/yyyy':'UTC'
+              }}
+            </strong>
+
+          </mat-card-content>
+        </mat-card>
+
+      </section>
+
+
+      <section class="content-grid">
+
+        <div class="deliverables-section">
+
+          <div class="section-heading">
+
+            <div>
+              <h2>
+                Entregables
+              </h2>
+
+              <p>
+                Gestiona las entregas asociadas
+                al proyecto.
+              </p>
+            </div>
+
+          </div>
+
+
+          <div
+            class="empty-state"
+            *ngIf="
+              proyecto.entregables.length === 0
+            "
+          >
+            <mat-icon>
+              inventory_2
+            </mat-icon>
+
+            <h3>
+              Sin entregables
+            </h3>
+
+            <p>
+              Agrega el primer entregable
+              utilizando el formulario.
+            </p>
+          </div>
+
+
+          <div class="deliverables-list">
+
+            <mat-card
+              class="deliverable-card"
+              *ngFor="
+                let entregable
+                of proyecto.entregables
+              "
+              [class.deliverable-card--overdue]="
+                entregable.esta_atrasado
+              "
+            >
+
+              <mat-card-content>
+
+                <div class="deliverable-header">
+
+                  <div>
+
+                    <span
+                      class="deliverable-state"
+                      [class.deliverable-state--done]="
+                        entregable.entregado
+                      "
+                      [class.deliverable-state--late]="
+                        entregable.esta_atrasado
+                      "
+                    >
+                      {{
+                        entregable.entregado
+                          ? 'Entregado'
+                          : (
+                              entregable.esta_atrasado
+                                ? 'Atrasado'
+                                : 'Pendiente'
+                            )
+                      }}
+                    </span>
+
+                    <h3>
+                      {{ entregable.nombre }}
+                    </h3>
+
+                  </div>
+
+                  <strong>
+                    {{
+                      entregable.fecha_entrega
+                        | date:'dd/MM/yyyy':'UTC'
+                    }}
+                  </strong>
+
+                </div>
+
+
+                <p class="deliverable-description">
+                  {{ entregable.descripcion }}
+                </p>
+
+
+                <div
+                  class="file-info"
+                  *ngIf="
+                    entregable.archivo_simulado
+                  "
+                >
+                  <mat-icon>
+                    attach_file
+                  </mat-icon>
+
+                  <span>
+                    {{
+                      entregable.archivo_simulado
+                    }}
+                  </span>
+                </div>
+
+
+                <div class="deliverable-actions">
+
+                  <button
+                    mat-stroked-button
+                    type="button"
+                    [disabled]="
+                      estaActualizando(
+                        entregable.id
+                      ) ||
+                      proyecto.estado ===
+                        'finalizado'
+                    "
+                    (click)="
+                      cambiarEstadoEntregable(
+                        entregable
+                      )
+                    "
+                  >
+                    <mat-icon>
+                      {{
+                        entregable.entregado
+                          ? 'undo'
+                          : 'task_alt'
+                      }}
+                    </mat-icon>
+
+                    {{
+                      entregable.entregado
+                        ? 'Marcar pendiente'
+                        : 'Marcar entregado'
+                    }}
+                  </button>
+
+
+                  <button
+                    mat-button
+                    type="button"
+                    [disabled]="
+                      estaActualizando(
+                        entregable.id
+                      ) ||
+                      proyecto.estado ===
+                        'finalizado'
+                    "
+                    (click)="
+                      eliminarEntregable(
+                        entregable
+                      )
+                    "
+                  >
+                    <mat-icon>
+                      delete_outline
+                    </mat-icon>
+
+                    Eliminar
+                  </button>
+
+                </div>
+
+              </mat-card-content>
+
+            </mat-card>
+
+          </div>
+
+        </div>
+
+
+        <mat-card
+          class="new-deliverable-card"
+        >
+          <mat-card-content>
+
+            <h2>
+              Nuevo entregable
+            </h2>
+
+            <p class="form-description">
+              Registra una nueva entrega para
+              este proyecto.
+            </p>
+
+
+            <p
+              class="finalized-info"
+              *ngIf="
+                proyecto.estado === 'finalizado'
+              "
+            >
+              El proyecto está finalizado y no
+              admite nuevos entregables.
+            </p>
+
+
+            <form
+              [formGroup]="entregableForm"
+              (ngSubmit)="agregarEntregable()"
+              *ngIf="
+                proyecto.estado !== 'finalizado'
+              "
+            >
+
+              <mat-form-field
+                appearance="outline"
+              >
+                <mat-label>
+                  Nombre
+                </mat-label>
+
+                <input
+                  matInput
+                  formControlName="nombre"
+                  placeholder="Ej: Diseño final"
+                >
+
+                <mat-error
+                  *ngIf="
+                    nombre.hasError('required')
+                  "
+                >
+                  El nombre es obligatorio.
+                </mat-error>
+
+                <mat-error
+                  *ngIf="
+                    nombre.hasError('minlength')
+                  "
+                >
+                  Debe tener al menos
+                  3 caracteres.
+                </mat-error>
+              </mat-form-field>
+
+
+              <mat-form-field
+                appearance="outline"
+              >
+                <mat-label>
+                  Descripción
+                </mat-label>
+
+                <textarea
+                  matInput
+                  rows="4"
+                  formControlName="descripcion"
+                  placeholder="Describe el entregable"
+                ></textarea>
+
+                <mat-error
+                  *ngIf="
+                    descripcion.hasError(
+                      'required'
+                    )
+                  "
+                >
+                  La descripción es obligatoria.
+                </mat-error>
+
+                <mat-error
+                  *ngIf="
+                    descripcion.hasError(
+                      'minlength'
+                    )
+                  "
+                >
+                  Debe tener al menos
+                  10 caracteres.
+                </mat-error>
+              </mat-form-field>
+
+
+              <mat-form-field
+                appearance="outline"
+              >
+                <mat-label>
+                  Fecha de entrega
+                </mat-label>
+
+                <input
+                  matInput
+                  type="date"
+                  formControlName="fecha_entrega"
+                >
+
+                <mat-error
+                  *ngIf="
+                    fechaEntrega.hasError(
+                      'required'
+                    )
+                  "
+                >
+                  La fecha es obligatoria.
+                </mat-error>
+
+                <mat-error
+                  *ngIf="
+                    fechaEntrega.hasError(
+                      'fueraDeRango'
+                    )
+                  "
+                >
+                  La fecha debe estar entre
+                  {{
+                    proyecto.fecha_inicio
+                      | date:'dd/MM/yyyy':'UTC'
+                  }}
+                  y
+                  {{
+                    proyecto.fecha_limite
+                      | date:'dd/MM/yyyy':'UTC'
+                  }}.
+                </mat-error>
+              </mat-form-field>
+
+
+              <mat-form-field
+                appearance="outline"
+              >
+                <mat-label>
+                  Archivo simulado
+                </mat-label>
+
+                <input
+                  matInput
+                  formControlName="
+                    archivo_simulado
+                  "
+                  placeholder="
+                    Ej: propuesta_final.pdf
+                  "
+                >
+
+                <mat-hint>
+                  Solo se registra el nombre
+                  del archivo.
+                </mat-hint>
+              </mat-form-field>
+
+
+              <button
+                mat-flat-button
+                type="submit"
+                class="submit-button"
+                [disabled]="guardandoEntregable"
+              >
+                <mat-icon>
+                  add
+                </mat-icon>
+
+                {{
+                  guardandoEntregable
+                    ? 'Agregando...'
+                    : 'Agregar entregable'
+                }}
+              </button>
+
+            </form>
+
+          </mat-card-content>
+        </mat-card>
+
+      </section>
+
+      <section class="comments-section">
+
+        <div class="section-heading">
+
+          <div>
+            <h2>
+              Comentarios del cliente
+            </h2>
+
+            <p>
+              Registra observaciones, solicitudes
+              y feedback relacionado con el proyecto.
+            </p>
+          </div>
+
+          <span class="comments-count">
+            {{ proyecto.comentarios.length }}
+            comentario{{
+              proyecto.comentarios.length === 1
+                ? ''
+                : 's'
+            }}
+          </span>
+
+        </div>
+
+
+        <div class="comments-grid">
+
+          <div class="comments-list">
+
+            <div
+              class="empty-state"
+              *ngIf="
+                proyecto.comentarios.length === 0
+              "
+            >
+              <mat-icon>
+                chat_bubble_outline
+              </mat-icon>
+
+              <h3>
+                Sin comentarios
+              </h3>
+
+              <p>
+                Todavía no existen comentarios
+                registrados para este proyecto.
+              </p>
+            </div>
+
+
+            <mat-card
+              class="comment-card"
+              *ngFor="
+                let comentario
+                of proyecto.comentarios
+              "
+            >
+
+              <mat-card-content>
+
+                <div class="comment-header">
+
+                  <div class="comment-author">
+
+                    <div class="comment-avatar">
+                      <mat-icon>
+                        person
+                      </mat-icon>
+                    </div>
+
+                    <div>
+                      <strong>
+                        {{ comentario.autor }}
+                      </strong>
+
+                      <span>
+                        {{
+                          comentario.fecha
+                            | date:'dd/MM/yyyy HH:mm'
+                        }}
+                      </span>
+                    </div>
+
+                  </div>
+
+
+                  <button
+                    mat-icon-button
+                    type="button"
+                    aria-label="Eliminar comentario"
+                    [disabled]="
+                      estaEliminandoComentario(
+                        comentario.id
+                      )
+                    "
+                    (click)="
+                      eliminarComentario(
+                        comentario
+                      )
+                    "
+                  >
+                    <mat-icon>
+                      delete_outline
+                    </mat-icon>
+                  </button>
+
+                </div>
+
+
+                <p class="comment-text">
+                  {{ comentario.texto }}
+                </p>
+
+              </mat-card-content>
+
+            </mat-card>
+
+          </div>
+
+
+          <mat-card class="new-comment-card">
+
+            <mat-card-content>
+
+              <h2>
+                Nuevo comentario
+              </h2>
+
+              <p class="form-description">
+                Registra el feedback recibido
+                por parte del cliente.
+              </p>
+
+
+              <form
+                [formGroup]="comentarioForm"
+                (ngSubmit)="agregarComentario()"
+              >
+
+                <mat-form-field
+                  appearance="outline"
+                >
+                  <mat-label>
+                    Autor
+                  </mat-label>
+
+                  <input
+                    matInput
+                    type="text"
+                    formControlName="autor"
+                    placeholder="Ej: EcoMarket"
+                  >
+
+                  <mat-error
+                    *ngIf="
+                      autorComentario.hasError(
+                        'required'
+                      )
+                    "
+                  >
+                    El autor es obligatorio.
+                  </mat-error>
+
+                  <mat-error
+                    *ngIf="
+                      autorComentario.hasError(
+                        'minlength'
+                      )
+                    "
+                  >
+                    Debe tener al menos
+                    2 caracteres.
+                  </mat-error>
+
+                </mat-form-field>
+
+
+                <mat-form-field
+                  appearance="outline"
+                >
+                  <mat-label>
+                    Comentario
+                  </mat-label>
+
+                  <textarea
+                    matInput
+                    rows="5"
+                    formControlName="texto"
+                    placeholder="
+                      Escribe el comentario del cliente
+                    "
+                  ></textarea>
+
+                  <mat-error
+                    *ngIf="
+                      textoComentario.hasError(
+                        'required'
+                      )
+                    "
+                  >
+                    El comentario es obligatorio.
+                  </mat-error>
+
+                  <mat-error
+                    *ngIf="
+                      textoComentario.hasError(
+                        'minlength'
+                      )
+                    "
+                  >
+                    Debe tener al menos
+                    5 caracteres.
+                  </mat-error>
+
+                </mat-form-field>
+
+
+                <button
+                  mat-flat-button
+                  type="submit"
+                  class="submit-button"
+                  [disabled]="guardandoComentario"
+                >
+                  <mat-icon>
+                    add_comment
+                  </mat-icon>
+
+                  {{
+                    guardandoComentario
+                      ? 'Registrando...'
+                      : 'Registrar comentario'
+                  }}
+                </button>
+
+              </form>
+
+            </mat-card-content>
+
+          </mat-card>
+
+        </div>
+
+      </section>
+
+    </ng-container>
+
+  </main>
+
+</div>

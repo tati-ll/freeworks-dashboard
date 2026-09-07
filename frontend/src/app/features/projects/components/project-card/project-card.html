@@ -108,6 +108,21 @@
           Editar proyecto
         </button>
 
+        <button
+          mat-button
+          type="button"
+          [routerLink]="[
+            '/proyectos',
+            proyecto.id
+          ]"
+        >
+          <mat-icon>
+            visibility
+          </mat-icon>
+
+          Ver detalles
+        </button>
+
       </div>
 
       <div class="data-item">
