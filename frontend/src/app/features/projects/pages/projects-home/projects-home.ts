@@ -30,6 +30,9 @@ export class ProjectsHomeComponent implements OnInit {
   }
 
   cargarProyectos(): void {
+    this.cargando = true;
+    this.error = '';
+
     this.projectsApi.getProyectos().subscribe({
       next: (proyectos) => {
         this.proyectos = proyectos;
@@ -52,5 +55,44 @@ export class ProjectsHomeComponent implements OnInit {
         this.cdr.markForCheck();
       },
     });
+  }
+
+  get totalProyectos(): number {
+    return this.proyectos.length;
+  }
+
+  get proyectosEnProgreso(): number {
+    return this.proyectos.filter(
+      (proyecto) =>
+        proyecto.estado === 'en_progreso'
+    ).length;
+  }
+
+  get proyectosPendientes(): number {
+    return this.proyectos.filter(
+      (proyecto) =>
+        proyecto.estado === 'pendiente'
+    ).length;
+  }
+
+  get proyectosFinalizados(): number {
+    return this.proyectos.filter(
+      (proyecto) =>
+        proyecto.estado === 'finalizado'
+    ).length;
+  }
+
+  get proyectosAtrasados(): number {
+    return this.proyectos.filter(
+      (proyecto) =>
+        proyecto.esta_atrasado
+    ).length;
+  }
+
+  trackByProyectoId(
+    _index: number,
+    proyecto: Proyecto
+  ): number {
+    return proyecto.id;
   }
 }

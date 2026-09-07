@@ -1,0 +1,121 @@
+<mat-card
+  class="project-card"
+  [class.project-card--overdue]="proyecto.esta_atrasado"
+>
+  <mat-card-content>
+
+    <div class="project-card__header">
+
+      <div class="project-card__title-area">
+
+        <span [ngClass]="prioridadClase">
+          {{ prioridadTexto }}
+        </span>
+
+        <h3>
+          {{ proyecto.nombre }}
+        </h3>
+
+        <div class="client">
+          <mat-icon>business</mat-icon>
+
+          <span>
+            {{ proyecto.cliente }}
+          </span>
+        </div>
+
+      </div>
+
+      <span [ngClass]="estadoClase">
+        {{ proyecto.estado_calculado }}
+      </span>
+
+    </div>
+
+    <p class="description">
+      {{ proyecto.descripcion }}
+    </p>
+
+    <div class="progress-heading">
+
+      <span>
+        Progreso
+      </span>
+
+      <strong>
+        {{ proyecto.progreso }}%
+      </strong>
+
+    </div>
+
+    <mat-progress-bar
+      mode="determinate"
+      [value]="proyecto.progreso"
+    >
+    </mat-progress-bar>
+
+    <div class="project-data">
+
+      <div class="data-item">
+
+        <mat-icon>
+          event
+        </mat-icon>
+
+        <div>
+          <span class="data-label">
+            Fecha límite
+          </span>
+
+          <strong>
+            {{
+              proyecto.fecha_limite
+                | date:'dd/MM/yyyy':'UTC'
+            }}
+          </strong>
+        </div>
+
+      </div>
+
+      <div class="data-item">
+
+        <mat-icon>
+          task_alt
+        </mat-icon>
+
+        <div>
+          <span class="data-label">
+            Entregables
+          </span>
+
+          <strong>
+            {{ proyecto.entregables_completados }}
+            de
+            {{ proyecto.total_entregables }}
+          </strong>
+        </div>
+
+      </div>
+
+      <div class="data-item">
+
+        <mat-icon>
+          comment
+        </mat-icon>
+
+        <div>
+          <span class="data-label">
+            Comentarios
+          </span>
+
+          <strong>
+            {{ proyecto.comentarios.length }}
+          </strong>
+        </div>
+
+      </div>
+
+    </div>
+
+  </mat-card-content>
+</mat-card>

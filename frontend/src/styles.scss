@@ -37,3 +37,24 @@ body {
   height: 100%;
 }
 /* You can add global styles to this file, and also import other style files */
+
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  color: #252525;
+  background: #f7f7f9;
+}
