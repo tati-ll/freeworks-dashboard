@@ -243,6 +243,33 @@
     </section>
 
 
+    <div
+      class="status-message status-message--success"
+      *ngIf="mensajeEstado"
+    >
+      <mat-icon>
+        check_circle
+      </mat-icon>
+
+      <span>
+        {{ mensajeEstado }}
+      </span>
+    </div>
+
+
+    <div
+      class="status-message status-message--error"
+      *ngIf="errorEstado"
+    >
+      <mat-icon>
+        error_outline
+      </mat-icon>
+
+      <span>
+        {{ errorEstado }}
+      </span>
+    </div>
+
     <section
       *ngIf="
         !cargando &&
@@ -303,6 +330,17 @@
             trackBy: trackByProyectoId
           "
           [proyecto]="proyecto"
+          [actualizando]="
+            estaActualizandoEstado(
+              proyecto.id
+            )
+          "
+          (estadoCambiado)="
+            cambiarEstado(
+              proyecto,
+              $event
+            )
+          "
         >
         </app-project-card>
 

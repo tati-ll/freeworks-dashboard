@@ -227,6 +227,26 @@
   color: #777;
 }
 
+.status-message {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 22px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+}
+
+.status-message--success {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.status-message--error {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
 @media (max-width: 1100px) {
   .summary-grid {
     grid-template-columns:

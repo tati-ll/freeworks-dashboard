@@ -142,6 +142,18 @@
   margin-bottom: 2px;
 }
 
+.project-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.status-selector {
+  width: 190px;
+}
+
 @media (max-width: 600px) {
   .project-card__header {
     flex-direction: column;
@@ -151,7 +163,16 @@
     grid-template-columns: 1fr;
   }
 
+  .project-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .status-selector {
+    width: 100%;
+  }
+
   .project-actions button {
-  width: 100%;
+    width: 100%;
   }
 }

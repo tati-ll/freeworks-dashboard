@@ -58,6 +58,40 @@
 
       <div class="project-actions">
 
+        <mat-form-field
+          appearance="outline"
+          class="status-selector"
+          subscriptSizing="dynamic"
+        >
+          <mat-label>
+            Cambiar estado
+          </mat-label>
+
+          <mat-select
+            [value]="proyecto.estado"
+            [disabled]="actualizando"
+            (selectionChange)="
+              cambiarEstado($event.value)
+            "
+          >
+            <mat-option value="pendiente">
+              Pendiente
+            </mat-option>
+
+            <mat-option value="en_progreso">
+              En progreso
+            </mat-option>
+
+            <mat-option
+              value="finalizado"
+              *ngIf="puedeMostrarFinalizado"
+            >
+              Finalizado
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+
         <button
           mat-stroked-button
           type="button"

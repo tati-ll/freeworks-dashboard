@@ -1,6 +1,14 @@
-import { Component, Input } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+} from '@angular/core';
 
-import { Proyecto } from '../../../../core/models/proyecto';
+import {
+  EstadoProyecto,
+  Proyecto,
+} from '../../../../core/models/proyecto';
 
 
 @Component({
@@ -13,6 +21,13 @@ export class ProjectCardComponent {
 
   @Input({ required: true })
   proyecto!: Proyecto;
+
+  @Input()
+  actualizando = false;
+
+  @Output()
+  estadoCambiado =
+    new EventEmitter<EstadoProyecto>();
 
   get estadoClase(): string {
     if (this.proyecto.esta_atrasado) {
@@ -55,5 +70,26 @@ export class ProjectCardComponent {
       default:
         return 'Prioridad baja';
     }
+  }
+
+  get puedeMostrarFinalizado(): boolean {
+    return (
+      this.proyecto.puede_finalizar ||
+      this.proyecto.estado === 'finalizado'
+    );
+  }
+
+  cambiarEstado(
+    nuevoEstado: EstadoProyecto
+  ): void {
+    if (
+      nuevoEstado === this.proyecto.estado
+    ) {
+      return;
+    }
+
+    this.estadoCambiado.emit(
+      nuevoEstado
+    );
   }
 }

@@ -4,7 +4,10 @@ import {
   OnInit,
 } from '@angular/core';
 
-import { Proyecto } from '../../../../core/models/proyecto';
+import {
+  EstadoProyecto,
+  Proyecto,
+} from '../../../../core/models/proyecto';
 import { ProjectsApiService } from '../../../../core/services/projects-api.service';
 
 
@@ -19,6 +22,11 @@ export class ProjectsHomeComponent implements OnInit {
   proyectos: Proyecto[] = [];
   cargando = true;
   error = '';
+  mensajeEstado = '';
+  errorEstado = '';
+
+  actualizandoEstadoIds =
+    new Set<number>();
 
   constructor(
     private projectsApi: ProjectsApiService,
@@ -87,6 +95,92 @@ export class ProjectsHomeComponent implements OnInit {
       (proyecto) =>
         proyecto.esta_atrasado
     ).length;
+  }
+
+  cambiarEstado(
+    proyecto: Proyecto,
+    nuevoEstado: EstadoProyecto
+  ): void {
+    if (
+      proyecto.estado === nuevoEstado
+    ) {
+      return;
+    }
+
+    this.mensajeEstado = '';
+    this.errorEstado = '';
+
+    this.actualizandoEstadoIds.add(
+      proyecto.id
+    );
+
+    this.cdr.markForCheck();
+
+    this.projectsApi
+      .actualizarProyecto(
+        proyecto.id,
+        {
+          estado: nuevoEstado,
+        }
+      )
+      .subscribe({
+        next: (proyectoActualizado) => {
+          this.proyectos =
+            this.proyectos.map(
+              (item) =>
+                item.id ===
+                proyectoActualizado.id
+                  ? proyectoActualizado
+                  : item
+            );
+
+          this.actualizandoEstadoIds.delete(
+            proyecto.id
+          );
+
+          this.mensajeEstado =
+            `El estado de "${proyectoActualizado.nombre}" fue actualizado correctamente.`;
+
+          this.cdr.markForCheck();
+        },
+
+        error: (error) => {
+          console.error(
+            'Error al cambiar estado:',
+            error
+          );
+
+          this.actualizandoEstadoIds.delete(
+            proyecto.id
+          );
+
+          const mensajeBackend =
+            error?.error?.estado;
+
+          if (
+            Array.isArray(mensajeBackend)
+          ) {
+            this.errorEstado =
+              String(mensajeBackend[0]);
+          } else if (mensajeBackend) {
+            this.errorEstado =
+              String(mensajeBackend);
+          } else {
+            this.errorEstado =
+              'No fue posible cambiar el estado del proyecto.';
+          }
+
+          this.cdr.markForCheck();
+        },
+      });
+  }
+
+  estaActualizandoEstado(
+    proyectoId: number
+  ): boolean {
+    return this.actualizandoEstadoIds.has(
+      proyectoId
+    );
   }
 
   trackByProyectoId(
