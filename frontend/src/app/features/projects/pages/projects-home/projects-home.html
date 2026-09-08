@@ -195,6 +195,185 @@
 
     </section>
 
+    <section
+      class="filters-card"
+      *ngIf="!cargando && !error"
+    >
+
+      <div class="filters-heading">
+
+        <div>
+          <h2>
+            Buscar y filtrar
+          </h2>
+
+          <p>
+            Encuentra proyectos por texto,
+            cliente, estado, prioridad o fecha.
+          </p>
+        </div>
+
+        <button
+          mat-button
+          type="button"
+          *ngIf="hayFiltrosActivos"
+          (click)="limpiarFiltros()"
+        >
+          <mat-icon>
+            filter_alt_off
+          </mat-icon>
+
+          Limpiar filtros
+        </button>
+
+      </div>
+
+
+      <div class="filters-grid">
+
+        <mat-form-field
+          appearance="outline"
+          class="search-field"
+        >
+          <mat-label>
+            Buscar proyecto o entregable
+          </mat-label>
+
+          <mat-icon matPrefix>
+            search
+          </mat-icon>
+
+          <input
+            matInput
+            type="text"
+            [(ngModel)]="busqueda"
+            placeholder="Ej: diseño, portal, pagos..."
+          >
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>
+            Cliente
+          </mat-label>
+
+          <mat-select
+            [(ngModel)]="filtroCliente"
+          >
+            <mat-option value="todos">
+              Todos los clientes
+            </mat-option>
+
+            <mat-option
+              *ngFor="
+                let cliente
+                of clientesDisponibles
+              "
+              [value]="cliente"
+            >
+              {{ cliente }}
+            </mat-option>
+          </mat-select>
+
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>
+            Estado
+          </mat-label>
+
+          <mat-select
+            [(ngModel)]="filtroEstado"
+          >
+            <mat-option value="todos">
+              Todos los estados
+            </mat-option>
+
+            <mat-option value="pendiente">
+              Pendiente
+            </mat-option>
+
+            <mat-option value="en_progreso">
+              En progreso
+            </mat-option>
+
+            <mat-option value="finalizado">
+              Finalizado
+            </mat-option>
+
+            <mat-option value="atrasado">
+              Atrasado
+            </mat-option>
+          </mat-select>
+
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>
+            Prioridad
+          </mat-label>
+
+          <mat-select
+            [(ngModel)]="filtroPrioridad"
+          >
+            <mat-option value="todos">
+              Todas las prioridades
+            </mat-option>
+
+            <mat-option value="alta">
+              Alta
+            </mat-option>
+
+            <mat-option value="media">
+              Media
+            </mat-option>
+
+            <mat-option value="baja">
+              Baja
+            </mat-option>
+          </mat-select>
+
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>
+            Fecha límite desde
+          </mat-label>
+
+          <input
+            matInput
+            type="date"
+            [(ngModel)]="fechaDesde"
+          >
+
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline">
+
+          <mat-label>
+            Fecha límite hasta
+          </mat-label>
+
+          <input
+            matInput
+            type="date"
+            [(ngModel)]="fechaHasta"
+          >
+
+        </mat-form-field>
+
+      </div>
+
+    </section>
+
 
     <section
       class="loading-state"
@@ -292,6 +471,8 @@
         </div>
 
         <span class="projects-count">
+          {{ proyectosFiltrados.length }}
+          de
           {{ totalProyectos }}
           proyecto{{ totalProyectos === 1 ? '' : 's' }}
         </span>
@@ -301,32 +482,47 @@
 
       <div
         class="empty-state"
-        *ngIf="proyectos.length === 0"
+        *ngIf="
+          proyectosFiltrados.length === 0
+        "
       >
-
         <mat-icon>
-          folder_off
+          search_off
         </mat-icon>
 
         <h3>
-          No existen proyectos
+          No encontramos proyectos
         </h3>
 
-        <p>
-          Todavía no se han registrado proyectos.
+        <p *ngIf="hayFiltrosActivos">
+          Prueba modificando o limpiando
+          los filtros de búsqueda.
         </p>
 
+        <p *ngIf="!hayFiltrosActivos">
+          Todavía no existen proyectos
+          registrados.
+        </p>
+
+        <button
+          mat-stroked-button
+          type="button"
+          *ngIf="hayFiltrosActivos"
+          (click)="limpiarFiltros()"
+        >
+          Limpiar filtros
+        </button>
       </div>
 
 
       <div
         class="projects-grid"
-        *ngIf="proyectos.length > 0"
+        *ngIf="proyectosFiltrados.length > 0"
       >
 
         <app-project-card
           *ngFor="
-            let proyecto of proyectos;
+            let proyecto of proyectosFiltrados;
             trackBy: trackByProyectoId
           "
           [proyecto]="proyecto"

@@ -22,6 +22,12 @@ export class ProjectsHomeComponent implements OnInit {
   proyectos: Proyecto[] = [];
   cargando = true;
   error = '';
+  busqueda = '';
+  filtroCliente = 'todos';
+  filtroEstado = 'todos';
+  filtroPrioridad = 'todos';
+  fechaDesde = '';
+  fechaHasta = '';
   mensajeEstado = '';
   errorEstado = '';
 
@@ -95,6 +101,118 @@ export class ProjectsHomeComponent implements OnInit {
       (proyecto) =>
         proyecto.esta_atrasado
     ).length;
+  }
+
+  get clientesDisponibles(): string[] {
+    return [
+      ...new Set(
+        this.proyectos
+          .map((proyecto) => proyecto.cliente)
+          .filter(Boolean)
+      ),
+    ].sort((a, b) =>
+      a.localeCompare(b, 'es')
+    );
+  }
+
+  private normalizarTexto(
+    texto: string
+  ): string {
+    return texto
+      .normalize('NFD')
+      .replace(
+        /[\u0300-\u036f]/g,
+        ''
+      )
+      .toLowerCase()
+      .trim();
+  }
+
+  get proyectosFiltrados(): Proyecto[] {
+    const termino =
+      this.normalizarTexto(this.busqueda);
+
+    return this.proyectos.filter(
+      (proyecto) => {
+
+        const coincideBusqueda =
+          !termino ||
+          this.normalizarTexto(
+            proyecto.nombre
+          ).includes(termino) ||
+          this.normalizarTexto(
+            proyecto.descripcion
+          ).includes(termino) ||
+          proyecto.entregables.some(
+            (entregable) =>
+              this.normalizarTexto(
+                entregable.nombre
+              ).includes(termino) ||
+              this.normalizarTexto(
+                entregable.descripcion
+              ).includes(termino)
+          );
+
+        const coincideCliente =
+          this.filtroCliente === 'todos' ||
+          proyecto.cliente ===
+            this.filtroCliente;
+
+        const coincidePrioridad =
+          this.filtroPrioridad === 'todos' ||
+          proyecto.prioridad ===
+            this.filtroPrioridad;
+
+        const coincideEstado =
+          this.filtroEstado === 'todos' ||
+          (
+            this.filtroEstado ===
+              'atrasado'
+              ? proyecto.esta_atrasado
+              : proyecto.estado ===
+                this.filtroEstado
+          );
+
+        const coincideFechaDesde =
+          !this.fechaDesde ||
+          proyecto.fecha_limite >=
+            this.fechaDesde;
+
+        const coincideFechaHasta =
+          !this.fechaHasta ||
+          proyecto.fecha_limite <=
+            this.fechaHasta;
+
+        return (
+          coincideBusqueda &&
+          coincideCliente &&
+          coincidePrioridad &&
+          coincideEstado &&
+          coincideFechaDesde &&
+          coincideFechaHasta
+        );
+      }
+    );
+  }
+
+  get hayFiltrosActivos(): boolean {
+    return (
+      this.busqueda.trim() !== '' ||
+      this.filtroCliente !== 'todos' ||
+      this.filtroEstado !== 'todos' ||
+      this.filtroPrioridad !== 'todos' ||
+      this.fechaDesde !== '' ||
+      this.fechaHasta !== ''
+    );
+  }
+
+  limpiarFiltros(): void {
+    this.busqueda = '';
+    this.filtroCliente = 'todos';
+    this.filtroEstado = 'todos';
+    this.filtroPrioridad = 'todos';
+    this.fechaDesde = '';
+    this.fechaHasta = '';
   }
 
   cambiarEstado(
