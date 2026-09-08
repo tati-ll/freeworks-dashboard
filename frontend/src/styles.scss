@@ -58,3 +58,24 @@ body {
   color: #252525;
   background: #f7f7f9;
 }
+
+body {
+  font-family:
+    Roboto,
+    "Helvetica Neue",
+    sans-serif;
+  line-height: 1.5;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid
+    var(--mat-sys-primary, #3f51b5);
+  outline-offset: 2px;
+}

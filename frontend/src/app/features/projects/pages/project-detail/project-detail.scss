@@ -394,6 +394,11 @@ mat-card-content {
   margin-top: 22px;
 }
 
+.new-deliverable-card mat-form-field,
+.new-comment-card mat-form-field {
+  width: 100%;
+}
+
 @media (max-width: 900px) {
   .content-grid {
     grid-template-columns: 1fr;

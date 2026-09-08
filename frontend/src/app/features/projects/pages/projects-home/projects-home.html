@@ -709,6 +709,8 @@
     <div
       class="status-message status-message--success"
       *ngIf="mensajeEstado"
+      role="status"
+      aria-live="polite"
     >
       <mat-icon>
         check_circle
@@ -723,6 +725,7 @@
     <div
       class="status-message status-message--error"
       *ngIf="errorEstado"
+      role="alert"
     >
       <mat-icon>
         error_outline

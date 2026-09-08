@@ -6,6 +6,13 @@
     box-shadow 0.2s ease;
 }
 
+.project-card mat-card-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 24px;
+}
+
 .project-card:hover {
   transform: translateY(-2px);
 }
@@ -147,7 +154,8 @@
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  margin-top: 20px;
+  margin-top: auto;
+  padding-top: 20px;
 }
 
 .status-selector {

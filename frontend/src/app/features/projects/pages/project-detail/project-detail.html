@@ -59,6 +59,7 @@
     <div
       class="message message--error"
       *ngIf="error"
+      role="alert"
     >
       <mat-icon>
         error_outline
@@ -71,6 +72,8 @@
     <div
       class="message message--success"
       *ngIf="mensaje"
+      role="status"
+      aria-live="polite"
     >
       <mat-icon>
         check_circle
