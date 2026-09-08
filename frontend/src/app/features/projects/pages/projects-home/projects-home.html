@@ -196,6 +196,290 @@
     </section>
 
     <section
+      class="alerts-panel"
+      *ngIf="
+        !cargando &&
+        !error &&
+        hayAlertasAtraso
+      "
+    >
+
+      <div class="alerts-panel__header">
+
+        <div class="alerts-icon">
+          <mat-icon>
+            notifications_active
+          </mat-icon>
+        </div>
+
+        <div>
+          <h2>
+            Atención requerida
+          </h2>
+
+          <p>
+            Existen proyectos o entregables
+            fuera de plazo.
+          </p>
+        </div>
+
+      </div>
+
+
+      <div
+        class="alerts-group"
+        *ngIf="proyectosAtrasados > 0"
+      >
+
+        <h3>
+          Proyectos atrasados
+        </h3>
+
+        <a
+          class="alert-item"
+          *ngFor="
+            let proyecto of proyectos
+          "
+          [routerLink]="[
+            '/proyectos',
+            proyecto.id
+          ]"
+          [hidden]="
+            !proyecto.esta_atrasado
+          "
+        >
+
+          <mat-icon>
+            warning_amber
+          </mat-icon>
+
+          <div>
+
+            <strong>
+              {{ proyecto.nombre }}
+            </strong>
+
+            <span>
+              Venció el
+              {{
+                proyecto.fecha_limite
+                  | date:'dd/MM/yyyy':'UTC'
+              }}
+            </span>
+
+          </div>
+
+        </a>
+
+      </div>
+
+
+      <div
+        class="alerts-group"
+        *ngIf="
+          entregasAtrasadas.length > 0
+        "
+      >
+
+        <h3>
+          Entregas atrasadas
+        </h3>
+
+        <a
+          class="alert-item"
+          *ngFor="
+            let alerta
+            of entregasAtrasadas
+          "
+          [routerLink]="[
+            '/proyectos',
+            alerta.proyecto.id
+          ]"
+        >
+
+          <mat-icon>
+            assignment_late
+          </mat-icon>
+
+          <div>
+
+            <strong>
+              {{ alerta.entregable.nombre }}
+            </strong>
+
+            <span>
+              {{ alerta.proyecto.nombre }}
+              · debía entregarse el
+              {{
+                alerta.entregable.fecha_entrega
+                  | date:'dd/MM/yyyy':'UTC'
+              }}
+            </span>
+
+          </div>
+
+        </a>
+
+      </div>
+
+    </section>
+
+    <section
+      class="analytics-section"
+      *ngIf="!cargando && !error"
+    >
+
+      <div class="section-heading">
+
+        <div>
+          <h2>
+            Resumen de rendimiento
+          </h2>
+
+          <p>
+            Visualización global del avance
+            de los proyectos y entregables.
+          </p>
+        </div>
+
+      </div>
+
+
+      <div class="analytics-grid">
+
+        <mat-card class="analytics-card">
+
+          <mat-card-content>
+
+            <h3>
+              Progreso promedio
+            </h3>
+
+            <div class="big-stat">
+              {{ progresoPromedio }}%
+            </div>
+
+            <mat-progress-bar
+              mode="determinate"
+              [value]="progresoPromedio"
+            >
+            </mat-progress-bar>
+
+            <p>
+              Promedio de avance considerando
+              todos los proyectos.
+            </p>
+
+          </mat-card-content>
+
+        </mat-card>
+
+
+        <mat-card class="analytics-card">
+
+          <mat-card-content>
+
+            <h3>
+              Entregables completados
+            </h3>
+
+            <div class="big-stat">
+              {{
+                totalEntregablesCompletados
+              }}
+              /
+              {{ totalEntregables }}
+            </div>
+
+            <mat-progress-bar
+              mode="determinate"
+              [value]="
+                porcentajeEntregablesCompletados
+              "
+            >
+            </mat-progress-bar>
+
+            <p>
+              {{
+                porcentajeEntregablesCompletados
+              }}%
+              de los entregables registrados
+              están completados.
+            </p>
+
+          </mat-card-content>
+
+        </mat-card>
+
+
+        <mat-card
+          class="
+            analytics-card
+            analytics-card--wide
+          "
+        >
+
+          <mat-card-content>
+
+            <h3>
+              Distribución por estado
+            </h3>
+
+            <div class="status-chart">
+
+              <div
+                class="chart-row"
+                *ngFor="
+                  let item
+                  of estadisticasEstado
+                "
+              >
+
+                <div class="chart-label">
+
+                  <span>
+                    {{ item.etiqueta }}
+                  </span>
+
+                  <strong>
+                    {{ item.cantidad }}
+                  </strong>
+
+                </div>
+
+                <div class="chart-track">
+
+                  <div
+                    class="chart-bar"
+                    [ngClass]="
+                      'chart-bar--' +
+                      item.clase
+                    "
+                    [style.width.%]="
+                      item.porcentaje
+                    "
+                  >
+                  </div>
+
+                </div>
+
+                <span class="chart-percentage">
+                  {{ item.porcentaje }}%
+                </span>
+
+              </div>
+
+            </div>
+
+          </mat-card-content>
+
+        </mat-card>
+
+      </div>
+
+    </section>
+
+    <section
       class="filters-card"
       *ngIf="!cargando && !error"
     >

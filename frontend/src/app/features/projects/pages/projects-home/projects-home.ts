@@ -4,10 +4,13 @@ import {
   OnInit,
 } from '@angular/core';
 
+import { Entregable } from '../../../../core/models/entregable';
+
 import {
   EstadoProyecto,
   Proyecto,
 } from '../../../../core/models/proyecto';
+
 import { ProjectsApiService } from '../../../../core/services/projects-api.service';
 
 
@@ -103,6 +106,172 @@ export class ProjectsHomeComponent implements OnInit {
     ).length;
   }
 
+  get totalEntregables(): number {
+    return this.proyectos.reduce(
+      (total, proyecto) =>
+        total + proyecto.total_entregables,
+      0
+    );
+  }
+
+  get totalEntregablesCompletados(): number {
+    return this.proyectos.reduce(
+      (total, proyecto) =>
+        total +
+        proyecto.entregables_completados,
+      0
+    );
+  }
+
+  get progresoPromedio(): number {
+    if (this.proyectos.length === 0) {
+      return 0;
+    }
+
+    const suma = this.proyectos.reduce(
+      (total, proyecto) =>
+        total + proyecto.progreso,
+      0
+    );
+
+    return Math.round(
+      suma / this.proyectos.length
+    );
+  }
+
+  get porcentajeEntregablesCompletados(): number {
+    if (this.totalEntregables === 0) {
+      return 0;
+    }
+
+    return Math.round(
+      (
+        this.totalEntregablesCompletados /
+        this.totalEntregables
+      ) * 100
+    );
+  }
+
+  get estadisticasEstado(): {
+    etiqueta: string;
+    cantidad: number;
+    porcentaje: number;
+    clase: string;
+  }[] {
+    const atrasados =
+      this.proyectos.filter(
+        (proyecto) =>
+          proyecto.esta_atrasado
+      ).length;
+
+    const pendientes =
+      this.proyectos.filter(
+        (proyecto) =>
+          !proyecto.esta_atrasado &&
+          proyecto.estado === 'pendiente'
+      ).length;
+
+    const enProgreso =
+      this.proyectos.filter(
+        (proyecto) =>
+          !proyecto.esta_atrasado &&
+          proyecto.estado === 'en_progreso'
+      ).length;
+
+    const finalizados =
+      this.proyectos.filter(
+        (proyecto) =>
+          proyecto.estado === 'finalizado'
+      ).length;
+
+    return [
+      {
+        etiqueta: 'Pendientes',
+        cantidad: pendientes,
+        porcentaje:
+          this.calcularPorcentaje(
+            pendientes
+          ),
+        clase: 'pending',
+      },
+      {
+        etiqueta: 'En progreso',
+        cantidad: enProgreso,
+        porcentaje:
+          this.calcularPorcentaje(
+            enProgreso
+          ),
+        clase: 'progress',
+      },
+      {
+        etiqueta: 'Finalizados',
+        cantidad: finalizados,
+        porcentaje:
+          this.calcularPorcentaje(
+            finalizados
+          ),
+        clase: 'finished',
+      },
+      {
+        etiqueta: 'Atrasados',
+        cantidad: atrasados,
+        porcentaje:
+          this.calcularPorcentaje(
+            atrasados
+          ),
+        clase: 'overdue',
+      },
+    ];
+  }  
+
+  private calcularPorcentaje(
+    cantidad: number
+  ): number {
+    if (this.totalProyectos === 0) {
+      return 0;
+    }
+
+    return Math.round(
+      (cantidad / this.totalProyectos) *
+        100
+    );
+  }
+
+  get entregasAtrasadas(): {
+    proyecto: Proyecto;
+    entregable: Entregable;
+  }[] {
+    const resultados: {
+      proyecto: Proyecto;
+      entregable: Entregable;
+    }[] = [];
+
+    for (
+      const proyecto of this.proyectos
+    ) {
+      for (
+        const entregable
+        of proyecto.entregables
+      ) {
+        if (entregable.esta_atrasado) {
+          resultados.push({
+            proyecto,
+            entregable,
+          });
+        }
+      }
+    }
+
+    return resultados;
+  }
+
+  get hayAlertasAtraso(): boolean {
+    return (
+      this.proyectosAtrasados > 0 ||
+      this.entregasAtrasadas.length > 0
+    );
+  }
+
   get clientesDisponibles(): string[] {
     return [
       ...new Set(
@@ -114,7 +283,7 @@ export class ProjectsHomeComponent implements OnInit {
       a.localeCompare(b, 'es')
     );
   }
-
+  
   private normalizarTexto(
     texto: string
   ): string {
